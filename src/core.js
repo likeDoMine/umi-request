@@ -1,13 +1,47 @@
+// lamia 中间件
 import Onion from './onion';
+
+/**
+ * lamia
+ * MapCache： Map类型的缓存配置
+ * mergeRequestOptions： 合并请求配置
+ */
 import { MapCache, mergeRequestOptions } from './utils';
+
+/**
+ * lamia
+ * 导出对应的addfix， 为请求地址添加对应的前缀，后缀
+ */
 import addfixInterceptor from './interceptor/addfix';
+
+/**
+ * lamia
+ * 中间件 请求
+ */
 import fetchMiddleware from './middleware/fetch';
+
+/**
+ * lamia
+ * 中间件 响应格式化
+ */
 import parseResponseMiddleware from './middleware/parseResponse';
+
+/**
+ * lamia
+ * 中间件 简化对应的query请求， 简化对应的post请求；
+ */
 import simplePost from './middleware/simplePost';
+
+/**
+ * lamia
+ * 中间件 对get的请求的参数，做序列化
+ */
 import simpleGet from './middleware/simpleGet';
 
 // 初始化全局和内核中间件
 const globalMiddlewares = [simplePost, simpleGet, parseResponseMiddleware];
+
+// lamia 核心请求
 const coreMiddlewares = [fetchMiddleware];
 
 Onion.globalMiddlewares = globalMiddlewares;

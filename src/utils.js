@@ -4,32 +4,52 @@
  */
 import { parse, stringify } from 'qs';
 
+/**
+ * lamia
+ * Map类型的缓存配置
+ */
 export class MapCache {
   constructor(options) {
+    // lamia 声明对象cache
     this.cache = new Map();
+    // lamia 声明对象timer
     this.timer = {};
+    // lamia 初始化最大缓存配置
     this.extendOptions(options);
   }
 
+  //  lamia this.maxCache定义maxCache
   extendOptions(options) {
     this.maxCache = options.maxCache || 0;
   }
 
+  // lamia 获取值
   get(key) {
     return this.cache.get(JSON.stringify(key));
   }
 
+  //  lamia 设置值
   set(key, value, ttl = 60000) {
     // 如果超过最大缓存数, 删除头部的第一个缓存.
     if (this.maxCache > 0 && this.cache.size >= this.maxCache) {
+      // lamia this.cache.keys(): 获取所有的cache的keys， 获取第一个值
       const deleteKey = [...this.cache.keys()][0];
+      // lamia 删除对象第一个this.cache的值
       this.cache.delete(deleteKey);
+
+      // lamia 如果deleteKey，第一个对应的值所对应的timer已经存在，则清除对应的定时器
       if (this.timer[deleteKey]) {
         clearTimeout(this.timer[deleteKey]);
       }
     }
+
+    //  lamia 获取cacheKey
     const cacheKey = JSON.stringify(key);
+
+    // lamia 设置cacheKey对应的值： value
     this.cache.set(cacheKey, value);
+
+    // lamia 如果需要设置过期时间，建立对应的定时器，当ttl时间到时，清除对应的cache， 并且清除定时器
     if (ttl > 0) {
       this.timer[cacheKey] = setTimeout(() => {
         this.cache.delete(cacheKey);
@@ -38,12 +58,14 @@ export class MapCache {
     }
   }
 
+  // lamia 删除key对应的cache， 及对应的timer
   delete(key) {
     const cacheKey = JSON.stringify(key);
     delete this.timer[cacheKey];
     return this.cache.delete(cacheKey);
   }
 
+  //  lamia 清除定时器，清除cache;
   clear() {
     this.timer = {};
     return this.cache.clear();
@@ -190,6 +212,12 @@ export function reqStringify(val) {
   return stringify(val, { arrayFormat: 'repeat', strictNullHandling: true });
 }
 
+/**
+ * lamia
+ * 合并请求配置
+ * @param {*} options
+ * @param {*} options2Merge
+ */
 export function mergeRequestOptions(options, options2Merge) {
   return {
     ...options,

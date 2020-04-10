@@ -1,8 +1,19 @@
+// lamia 封装请求的拦截器及核心请求
 import Core from './core';
+
+// lamia 取消的错误信息封装
 import Cancel from './cancel/cancel';
+
+// lamia 通过 CancelToken 来取消请求操作
 import CancelToken from './cancel/cancelToken';
+
+// lamia 工具类： 取消操作
 import isCancel from './cancel/isCancel';
+
+// lamia 中间件封装
 import Oinon from './onion';
+
+// lamia request 的插件工具类
 import { getParamObject, mergeRequestOptions } from './utils';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
