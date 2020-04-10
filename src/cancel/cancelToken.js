@@ -8,11 +8,16 @@ import Cancel from './cancel';
  * @param {Function} executor The executor function.
  */
 function CancelToken(executor) {
+
+  //  如果executor不是function，则类型错误
   if (typeof executor !== 'function') {
     throw new TypeError('executor must be a function.');
   }
 
+  //  定义Promise
   var resolvePromise;
+
+  // 定一个promise 
   this.promise = new Promise(function promiseExecutor(resolve) {
     resolvePromise = resolve;
   });
