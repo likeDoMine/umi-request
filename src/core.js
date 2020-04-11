@@ -16,7 +16,7 @@ import addfixInterceptor from './interceptor/addfix';
 
 /**
  * lamia
- * 中间件 请求
+ * 中间件 请求的封装
  */
 import fetchMiddleware from './middleware/fetch';
 

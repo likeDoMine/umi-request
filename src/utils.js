@@ -86,14 +86,24 @@ export class RequestError extends Error {
 
 /**
  * 响应异常
+ *
  */
 export class ResponseError extends Error {
   constructor(response, text, data, request, type = 'ResponseError') {
     super(text || response.statusText);
+    // 定义错误的名称
     this.name = 'ResponseError';
+
+    // 定义数据
     this.data = data;
+
+    // 最终的响应
     this.response = response;
+
+    // 请求
     this.request = request;
+
+    // 设置响应错误的类型
     this.type = type;
   }
 }
@@ -101,14 +111,19 @@ export class ResponseError extends Error {
 /**
  * http://gitlab.alipay-inc.com/KBSJ/gxt/blob/release_gxt_S8928905_20180531/src/util/request.js#L63
  * 支持gbk
+ * 将对应的文件类型，转化成对应的GBK的格式
  */
 export function readerGBK(file) {
   return new Promise((resolve, reject) => {
+    // 读取对应的file文件流
     const reader = new FileReader();
+    // reader加载时获取对应的结果流
     reader.onload = () => {
       resolve(reader.result);
     };
+    // 当读取失败是，返回对应的reject
     reader.onerror = reject;
+    // 设置对应的文件格式GBK
     reader.readAsText(file, 'GBK'); // setup GBK decoding
   });
 }
@@ -117,16 +132,20 @@ export function readerGBK(file) {
  * 安全的JSON.parse
  */
 export function safeJsonParse(data, throwErrIfParseFail = false, response = null, request = null) {
+  // 通过try的方式，如果json.parse格式化数据错误，则执行对应的catch
   try {
     return JSON.parse(data);
   } catch (e) {
+    // 当throwErrIfParseFail为true时， 则曝出异常
     if (throwErrIfParseFail) {
       throw new ResponseError(response, 'JSON.parse fail', data, request, 'ParseError');
     }
   } // eslint-disable-line no-empty
+  // 正常输出对应的data
   return data;
 }
 
+// 等待一定时间执行超时的返回
 export function timeout2Throw(msec, request) {
   return new Promise((_, reject) => {
     setTimeout(() => {
@@ -136,6 +155,7 @@ export function timeout2Throw(msec, request) {
 }
 
 // If request options contain 'cancelToken', reject request when token has been canceled
+// 取消promise的操作
 export function cancel2Throw(opt) {
   return new Promise((_, reject) => {
     if (opt.cancelToken) {
@@ -149,6 +169,7 @@ export function cancel2Throw(opt) {
 const toString = Object.prototype.toString;
 
 // Check env is browser or node
+// 验证环境变量
 export function getEnv() {
   let env;
   // Only Node.JS has a process variable that is of [[Class]] process
@@ -162,22 +183,27 @@ export function getEnv() {
   return env;
 }
 
+// 判断是否为数组类型
 export function isArray(val) {
   return typeof val === 'object' && Object.prototype.toString.call(val) === '[object Array]';
 }
 
+// 判断是否为Url的查询参数 URLSearchParams
 export function isURLSearchParams(val) {
   return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
 }
 
+// 判断是否为日期格式类型
 export function isDate(val) {
   return typeof val === 'object' && Object.prototype.toString.call(val) === '[object Date]';
 }
 
+// 判断是否为isObject
 export function isObject(val) {
   return val !== null && typeof val === 'object';
 }
 
+// 遍历数组或者对象，通过callback的方式调用
 export function forEach2ObjArr(target, callback) {
   if (!target) return;
 
@@ -208,6 +234,7 @@ export function getParamObject(val) {
   return val;
 }
 
+// 将请求转化成query请求的字符串格式
 export function reqStringify(val) {
   return stringify(val, { arrayFormat: 'repeat', strictNullHandling: true });
 }

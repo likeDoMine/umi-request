@@ -97,8 +97,14 @@ export default function fetchMiddleware(ctx, next) {
   }
 
   // 从缓存池检查是否有缓存数据
+
+  // 用于判断是否为浏览器
   const isBrowser = getEnv() === 'BROWSER';
+
+  // 判断是否需要缓存
   const needCache = validateCache(url, options) && useCache && isBrowser;
+
+  //  如果需要缓存
   if (needCache) {
     let responseCache = cache.get({
       url,
@@ -113,15 +119,19 @@ export default function fetchMiddleware(ctx, next) {
     }
   }
 
+  // 定义响应
   let response;
-  // 超时处理、取消请求处理
+  // 超时处理
   if (timeout > 0) {
+    // 同时执行，并返回对应的组合响应
     response = Promise.race([cancel2Throw(options, ctx), adapter(url, options), timeout2Throw(timeout, ctx.req)]);
   } else {
+    // 不需要超时处理，则执行要取消操作及请求操作
     response = Promise.race([cancel2Throw(options, ctx), adapter(url, options)]);
   }
 
   // 兼容老版本 response.interceptor
+  // 拦截器的处理
   responseInterceptors.forEach(handler => {
     response = response.then(res => {
       // Fix multiple clones not working, issue: https://github.com/github/fetch/issues/504
@@ -130,6 +140,7 @@ export default function fetchMiddleware(ctx, next) {
     });
   });
 
+  // 返回最终的响应对象，如果需要缓存处理，则将请求设置到对应的缓存中
   return response.then(res => {
     // 是否存入缓存池
     if (needCache) {
